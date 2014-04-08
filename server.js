@@ -4,27 +4,19 @@ var url = require('url');
 var querystring = require('querystring');
 var websocket = require('websocket-stream');
 
-var CONFIG = {
-  root: process.cwd()
-};
-
-exports.config = function(config) {
+module.exports = function(wss, config) {
+  var cfg = { root: process.cwd() };
 
   if (config) {
     for (var p in config) {
-      CONFIG[p] = config[p];
+      cfg[p] = config[p];
     }
   }
 
-  return CONFIG;
-}
-
-module.exports = function(wss) {
   wss.on('connection', streamcon)
   return wss;
 
   function streamcon(ws) {
-    var cfg = exports.config();
     var urlobj = url.parse(ws.upgradeReq.url);
     var filepath = path.join(cfg.root, urlobj.pathname);
     var options = querystring.parse(urlobj.query);

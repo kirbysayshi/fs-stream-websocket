@@ -21,6 +21,7 @@ fs.config({
   protocol: 'ws:'
 })
 
+// This will be streamed from the server.
 fs.createReadStream('somefile.txt', 'utf8').on('data', function(chunk) {
   console.log(chunk);
 });
@@ -34,11 +35,12 @@ var http = require('http');
 var server = http.createServer();
 var wss = new WebSocketServer({server: server})
 
-fsserver.config({
+// optional, defaults shown
+var config = {
   root: process.cwd() // directory to use for static files
-})
+}
 
-fsserver(wss);
+fsserver(wss, config);
 ```
 
 Tests
