@@ -1,0 +1,35 @@
+{
+  "name": "fs-stream-websocket",
+  "version": "0.0.0",
+  "description": "`fs.createReadStream` and `fs.createWriteStream` over a websocket, assumedly in a browser.",
+  "main": "server.js",
+  "browser": "fs.js",
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kirbysayshi/fs-stream-websocket.git"
+  },
+  "keywords": [
+    "fs",
+    "websocket",
+    "browserify",
+    "stream"
+  ],
+  "author": "Drew Petersen <kirbysayshi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kirbysayshi/fs-stream-websocket/issues"
+  },
+  "homepage": "https://github.com/kirbysayshi/fs-stream-websocket",
+  "dependencies": {
+    "through": "^2.3.4",
+    "websocket-stream": "^0.5.1"
+  },
+  "devDependencies": {
+    "tape": "^2.12.3",
+    "concat-stream": "^1.4.4",
+    "ws": "^0.4.31"
+  }
+}
