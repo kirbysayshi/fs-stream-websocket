@@ -50,9 +50,9 @@ test('createWritableStream writes utf8', function(t) {
     // Normally you would have a file some other way, via a browser API.
     // We're just using fs directly because we just need file data.
     var input = fs.createReadStream('./package.json', { encoding: 'utf8' });
-    var out = client.createWriteStream('./package2.json', { encoding: 'utf8' });
+    var out = client.createWriteStream('./temp.json', { encoding: 'utf8' });
     input.pipe(out).on('close', function() {
-      fs.createReadStream('./package2.json', { encoding: 'utf8' })
+      fs.createReadStream('./temp.json', { encoding: 'utf8' })
         .pipe(all);
     });
   });
@@ -62,7 +62,7 @@ test('createWritableStream writes utf8', function(t) {
     t.equal(JSON.parse(data).main, 'server.js');
     echo.http.close(function() {
       // Cleanup.
-      fs.unlinkSync('./package2.json');
+      fs.unlinkSync('./temp.json');
       t.end()
     });
   });
