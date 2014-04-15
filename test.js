@@ -43,19 +43,8 @@ test('createReadStream emits Buffers', function(t) {
 
 test('createWritableStream writes utf8', function(t) {
 
-  // package.json is is piped to the server as package2.json,
+  // package.json is is piped to the server as temp.json,
   // which is then read back from the fs manually to verify.
-
-  var echo = echoserver(function() {
-    // Normally you would have a file some other way, via a browser API.
-    // We're just using fs directly because we just need file data.
-    var input = fs.createReadStream('./package.json', { encoding: 'utf8' });
-    var out = client.createWriteStream('./temp.json', { encoding: 'utf8' });
-    input.pipe(out).on('close', function() {
-      fs.createReadStream('./temp.json', { encoding: 'utf8' })
-        .pipe(all);
-    });
-  });
 
   var all = concat(function(data) {
     t.ok(typeof data === 'string', 'data is a string');
@@ -66,11 +55,36 @@ test('createWritableStream writes utf8', function(t) {
       t.end()
     });
   });
+
+  var echo = echoserver(function() {
+    // Normally you would have a file some other way, via a browser API.
+    // We're just using fs directly because we just need file data.
+    var input = fs.createReadStream('./package.json', { encoding: 'utf8' });
+    var out = client.createWriteStream('./temp.json', { encoding: 'utf8' });
+
+    out.on('end', function() {
+      // There does not _appear_ to be a way to know when the server has
+      // actually finished writing the file, since the websocket connection
+      // is closed in tandem with the writeStream coming in. In other words,
+      // when the local writeStream finishes, then websocket-stream
+      // automatically closes the connection without funneling any events
+      // back to the client. The local stream finishes because it flushes
+      // its data to the underlying system, and thus causes the connection to
+      // be closed.
+      setTimeout(function() {
+        fs.createReadStream('./temp.json', { encoding: 'utf8' })
+            .pipe(all);
+      }, 500)
+    });
+
+    input.pipe(out)
+  });
 });
 
 function echoserver(onlisten) {
   var web = http.createServer();
   var wss = new WebSocketServer({ server: web });
+  wss.on('error', console.error.bind(console, 'wss error'));
   server(wss);
   web.listen(port, onlisten);
   return {
