@@ -6,6 +6,8 @@ fs-stream-websocket
 
 This module is incomplete, and is not secure.
 
+[![Build Status](https://travis-ci.org/kirbysayshi/fs-stream-websocket.svg?branch=master)](https://travis-ci.org/kirbysayshi/fs-stream-websocket)
+
 Usage
 -----
 
@@ -37,7 +39,7 @@ var wss = new WebSocketServer({server: server})
 
 // optional, defaults shown
 var config = {
-  root: process.cwd() // directory to use for static files
+  root: process.cwd() // directory to use for file root (you can get out with ..)
 }
 
 fsserver(wss, config);
@@ -49,8 +51,6 @@ Tests
 ```sh
 npm test
 ```
-
-Currently there is a race condition I'm trying to track down, possibly related to https://github.com/maxogden/websocket-stream/issues/33.
 
 
 

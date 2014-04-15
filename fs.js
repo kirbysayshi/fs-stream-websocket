@@ -31,7 +31,8 @@ exports.config = function(config) {
 exports.createReadStream = function(filepath, options) {
   var wsurl = urlForFile(filepath, 'read', options);
   var ws = websocket(wsurl);
-  return ws.pipe(through(bufferCheck));
+  var out = through(bufferCheck);
+  return ws.pipe(out);
 
   function bufferCheck(chunk) {
     // If chunk is an ArrayBuffer, this means no encoding was specified,
