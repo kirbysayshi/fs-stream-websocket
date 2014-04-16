@@ -21,6 +21,7 @@ test('createReadStream emits utf8', function(t) {
   });
 
   var all = concat(function(data) {
+    t.ok(typeof data === 'string', 'data is a string');
     t.equal(JSON.parse(data).main, 'server.js');
     echo.http.close(t.end);
   });
@@ -61,7 +62,7 @@ test('createWritableStream writes utf8', function(t) {
     var input = fs.createReadStream('./package.json', { encoding: 'utf8' });
     var out = client.createWriteStream('./temp.json', { encoding: 'utf8' });
 
-    out.on('finish', function() {
+    out.on('end', function() {
       // There does not _appear_ to be a way to know when the server has
       // actually finished writing the file, since the websocket connection
       // is closed in tandem with the writeStream coming in. In other words,

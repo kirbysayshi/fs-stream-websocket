@@ -1,7 +1,7 @@
 var path = require('path');
 var querystring = require('querystring');
 var websocket = require('websocket-stream');
-var through2 = require('through2');
+var through = require('through');
 var Buffer = require('buffer').Buffer; // Included for explicit Browserify support.
 
 // These will be set to their actual defaults lazily to prevent
@@ -31,10 +31,10 @@ exports.config = function(config) {
 exports.createReadStream = function(filepath, options) {
   var wsurl = urlForFile(filepath, 'read', options);
   var ws = websocket(wsurl);
-  var out = through2(bufferCheck);
+  var out = through(bufferCheck);
   return ws.pipe(out);
 
-  function bufferCheck(chunk, enc, callback) {
+  function bufferCheck(chunk) {
     // If chunk is an ArrayBuffer, this means no encoding was specified,
     // so websocket-stream just passed it along raw, which for websockets
     // is an ArrayBuffer. Since this is a bit of a node shim, ensure it's
@@ -43,16 +43,14 @@ exports.createReadStream = function(filepath, options) {
       chunk = new Buffer(new Uint8Array(chunk));
     }
 
-    this.push(chunk);
-
-    callback();
+    this.queue(chunk);
   }
 }
 
 exports.createWriteStream = function(filepath, options) {
   var wsurl = urlForFile(filepath, 'write', options);
   var ws = websocket(wsurl);
-  var input = through2();
+  var input = through();
   input.pipe(ws);
   return input;
 }

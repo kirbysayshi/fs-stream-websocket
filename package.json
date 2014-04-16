@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/kirbysayshi/fs-stream-websocket",
   "dependencies": {
-    "debug": "^0.8.0",
-    "through2": "^0.4.1",
-    "websocket-stream": "^0.5.1"
+    "through": "^2.3.4",
+    "websocket-stream": "^0.5.1",
+    "debug": "^0.8.0"
   },
   "devDependencies": {
     "tape": "^2.12.3",
