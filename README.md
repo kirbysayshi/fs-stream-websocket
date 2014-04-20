@@ -4,7 +4,7 @@ fs-stream-websocket
 
 `fs.createReadStream` and `fs.createWriteStream` over a websocket, assumedly in a browser. Uses [websocket-stream](https://github.com/maxogden/websocket-stream/) for file streaming.
 
-This module is incomplete, and is not secure.
+This module is incomplete, and has no security or sandbox for restricting file read/writing.
 
 [![Build Status](https://travis-ci.org/kirbysayshi/fs-stream-websocket.svg?branch=master)](https://travis-ci.org/kirbysayshi/fs-stream-websocket)
 
@@ -19,7 +19,7 @@ var fs = require('fs-stream-websocket'); // gives you fs.js
 // optional, defaults shown
 fs.config({
   host: window.location.host,
-  path: '', // Added after host as a prefix
+  prefix: '', // Added after host as a prefix
   protocol: 'ws:'
 })
 

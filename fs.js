@@ -60,7 +60,28 @@ function urlForFile(filepath, op, options) {
   var cfg = exports.config();
   opts.fn = op;
 
-  var wsurl = cfg.protocol + '//' + path.join(cfg.host, filepath)
+  // This __dirname __filename stuff is almost exclusively for jsbook, since
+  // you want the "file" that is calling read/write to be able to use relative
+  // paths without needing to configure options. There is basically no other
+  // environment where __filename/__dirname would be defined globally.
+  var gbl = null;
+
+  if (typeof global !== 'undefined' && global.__filename && global.__dirname) {
+    gbl = global;
+  }
+
+  if (typeof window !== 'undefined' && window.__filename && window.__dirname) {
+    gbl = window;
+  }
+
+  if (gbl) {
+    opts.__filename = gbl.__filename;
+    opts.__dirname = gbl.__dirname;
+  }
+
+  opts.filepath = filepath;
+
+  var wsurl = cfg.protocol + '//' + cfg.host + '/' + cfg.prefix + '/'
     + '?'
     + querystring.stringify(opts);
 

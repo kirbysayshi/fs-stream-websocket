@@ -3,6 +3,8 @@ var http = require('http');
 var WebSocketServer = require('ws').Server;
 var concat = require('concat-stream');
 var fs = require('fs');
+var querystring = require('querystring');
+var url = require('url');
 
 var client = require('./fs');
 var server = require('./server');
@@ -13,10 +15,42 @@ client.config({
   host: 'localhost:' + port
 })
 
-test('createReadStream emits utf8', function(t) {
+test('create[Read|Write]Stream transmits __filename __dirname if globally present', function(t) {
+
+  t.plan(3);
+
+  global.__filename = __filename;
+  global.__dirname = __dirname;
+
   var echo = echoserver(function() {
     client
       .createReadStream('./package.json', { encoding: 'utf8' })
+      .pipe(concat(function(data) {
+        // sink.
+      }))
+  });
+
+  echo.wss.on('connection', function(ws) {
+    var urlobj = url.parse(ws.upgradeReq.url);
+    var options = querystring.parse(urlobj.query);
+
+    t.equal(options.__filename, __filename);
+    t.equal(options.__dirname, __dirname);
+    t.end();
+  })
+
+  t.test('cleanup', function(t) {
+    delete global.__filename;
+    delete global.__dirname;
+    echo.http.close(t.end);
+  })
+
+});
+
+test('createReadStream emits utf8', function(t) {
+  var echo = echoserver(function() {
+    client
+      .createReadStream('package.json', { encoding: 'utf8' })
       .pipe(all)
   });
 
@@ -41,7 +75,7 @@ test('createReadStream emits Buffers', function(t) {
   });
 });
 
-test('createWritableStream writes utf8', function(t) {
+test('createWriteStream writes utf8', function(t) {
 
   // package.json is is piped to the server as temp.json,
   // which is then read back from the fs manually to verify.

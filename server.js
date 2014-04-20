@@ -19,8 +19,8 @@ module.exports = function(wss, config) {
 
   function streamcon(ws) {
     var urlobj = url.parse(ws.upgradeReq.url);
-    var filepath = path.join(cfg.root, urlobj.pathname);
     var options = querystring.parse(urlobj.query);
+    var filepath = path.resolve(cfg.root, options.__dirname || '', options.filepath);
 
     dbg('recv start %s', filepath)
     dbg('  options %s', JSON.stringify(options));
