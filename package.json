@@ -1,6 +1,6 @@
 {
   "name": "fs-stream-websocket",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "`fs.createReadStream` and `fs.createWriteStream` over a websocket, assumedly in a browser.",
   "main": "server.js",
   "browser": "fs.js",
